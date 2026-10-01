@@ -188,15 +188,19 @@ private:
 	float _gps_vel_noise_n = 0.0f;
 	float _gps_vel_noise_e = 0.0f;
 	float _gps_vel_noise_d = 0.0f;
-	const float _pos_noise_amplitude = 0.8f;    // Position noise amplitude [m]
+	uint32_t _gps_sample_count = 0;
 	const float _pos_random_walk = 0.01f;       // Position random walk coefficient
 	const float _pos_markov_time = 0.95f;       // Position Markov process coefficient
-	const float _vel_noise_amplitude = 0.05f;   // Velocity noise amplitude [m/s]
 	const float _vel_noise_density = 0.2f;      // Velocity noise process density
 	const float _vel_markov_time = 0.85f;       // Velocity Markov process coefficient
 
 	DEFINE_PARAMETERS(
 		(ParamInt<px4::params::SIM_GPS_USED>) _sim_gps_used,
+		(ParamFloat<px4::params::SIM_GZ_GPS_PNOIS>) _sim_gz_gps_pnois,
+		(ParamFloat<px4::params::SIM_GZ_GPS_VNOIS>) _sim_gz_gps_vnois,
+		(ParamFloat<px4::params::SIM_GZ_GPS_EPH>) _sim_gz_gps_eph,
+		(ParamFloat<px4::params::SIM_GZ_GPS_EPV>) _sim_gz_gps_epv,
+		(ParamInt<px4::params::SIM_GZ_GPS_DIV>) _sim_gz_gps_div,
 		(ParamInt<px4::params::SIM_GZ_EN_LIDAR>) _sim_gz_en_lidar,
 		(ParamInt<px4::params::SIM_GZ_EN_FLOW>) _sim_gz_en_flow,
 		(ParamInt<px4::params::SIM_GZ_EN_ASPD>) _sim_gz_en_aspd,

@@ -56,6 +56,60 @@ parameters:
         1: Enabled
       default: 1
       reboot_required: true
+    SIM_GZ_GPS_PNOIS:
+      description:
+        short: Simulated GPS position noise amplitude
+        long: |-
+          Scales the correlated (Gauss-Markov) position noise added to the
+          Gazebo NavSat sensor. The resulting horizontal standard deviation
+          is about 0.027 times this value.
+      type: float
+      default: 0.8
+      min: 0.0
+      max: 200.0
+      decimal: 2
+      unit: m
+    SIM_GZ_GPS_VNOIS:
+      description:
+        short: Simulated GPS velocity noise amplitude
+        long: |-
+          Scales the correlated (Gauss-Markov) velocity noise added to the
+          Gazebo NavSat sensor. The resulting horizontal standard deviation
+          is about 0.38 times this value.
+      type: float
+      default: 0.05
+      min: 0.0
+      max: 10.0
+      decimal: 3
+      unit: m/s
+    SIM_GZ_GPS_EPH:
+      description:
+        short: Simulated GPS reported horizontal accuracy
+      type: float
+      default: 0.9
+      min: 0.01
+      max: 100.0
+      decimal: 2
+      unit: m
+    SIM_GZ_GPS_EPV:
+      description:
+        short: Simulated GPS reported vertical accuracy
+      type: float
+      default: 1.78
+      min: 0.01
+      max: 100.0
+      decimal: 2
+      unit: m
+    SIM_GZ_GPS_DIV:
+      description:
+        short: Simulated GPS rate divider
+        long: |-
+          Only every Nth sample of the Gazebo NavSat sensor is published,
+          e.g. 6 turns the 30 Hz of the x500 model into 5 Hz.
+      type: int32
+      default: 1
+      min: 1
+      max: 300
 - group: UAVCAN
   definitions:
     SIM_GZ_EN:

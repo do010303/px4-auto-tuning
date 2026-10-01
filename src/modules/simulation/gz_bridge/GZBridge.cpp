@@ -689,16 +689,19 @@ float GZBridge::generate_wgn()
 void GZBridge::addGpsNoise(double &latitude, double &longitude, double &altitude,
 			   float &vel_north, float &vel_east, float &vel_down)
 {
+	const float pos_noise_amplitude = _sim_gz_gps_pnois.get();
+	const float vel_noise_amplitude = _sim_gz_gps_vnois.get();
+
 	_gps_pos_noise_n = _pos_markov_time * _gps_pos_noise_n +
-			   _pos_random_walk * generate_wgn() * _pos_noise_amplitude -
+			   _pos_random_walk * generate_wgn() * pos_noise_amplitude -
 			   0.02f * _gps_pos_noise_n;
 
 	_gps_pos_noise_e = _pos_markov_time * _gps_pos_noise_e +
-			   _pos_random_walk * generate_wgn() * _pos_noise_amplitude -
+			   _pos_random_walk * generate_wgn() * pos_noise_amplitude -
 			   0.02f * _gps_pos_noise_e;
 
 	_gps_pos_noise_d = _pos_markov_time * _gps_pos_noise_d +
-			   _pos_random_walk * generate_wgn() * _pos_noise_amplitude * 1.5f -
+			   _pos_random_walk * generate_wgn() * pos_noise_amplitude * 1.5f -
 			   0.02f * _gps_pos_noise_d;
 
 	latitude += math::degrees((double)_gps_pos_noise_n / CONSTANTS_RADIUS_OF_EARTH);
@@ -706,13 +709,13 @@ void GZBridge::addGpsNoise(double &latitude, double &longitude, double &altitude
 	altitude += (double)_gps_pos_noise_d;
 
 	_gps_vel_noise_n = _vel_markov_time * _gps_vel_noise_n +
-			   _vel_noise_density * generate_wgn() * _vel_noise_amplitude;
+			   _vel_noise_density * generate_wgn() * vel_noise_amplitude;
 
 	_gps_vel_noise_e = _vel_markov_time * _gps_vel_noise_e +
-			   _vel_noise_density * generate_wgn() * _vel_noise_amplitude;
+			   _vel_noise_density * generate_wgn() * vel_noise_amplitude;
 
 	_gps_vel_noise_d = _vel_markov_time * _gps_vel_noise_d +
-			   _vel_noise_density * generate_wgn() * _vel_noise_amplitude * 1.2f;
+			   _vel_noise_density * generate_wgn() * vel_noise_amplitude * 1.2f;
 
 	vel_north += _gps_vel_noise_n;
 	vel_east += _gps_vel_noise_e;
@@ -750,6 +753,11 @@ void GZBridge::navSatCallback(const gz::msgs::NavSat &msg)
 	// Apply noise model (based on ublox F9P)
 	addGpsNoise(latitude, longitude, altitude, vel_north, vel_east, vel_down);
 
+	// Lower the output rate by only publishing every Nth sample
+	if (++_gps_sample_count % math::max(_sim_gz_gps_div.get(), (int32_t)1) != 0) {
+		return;
+	}
+
 	// Device ID
 	device::Device::DeviceId id{};
 	id.devid_s.bus_type = device::Device::DeviceBusType::DeviceBusType_SIMULATION;
@@ -764,8 +772,8 @@ void GZBridge::navSatCallback(const gz::msgs::NavSat &msg)
 		sensor_gps.fix_type = 3; // 3D fix
 		sensor_gps.s_variance_m_s = 0.4f;
 		sensor_gps.c_variance_rad = 0.1f;
-		sensor_gps.eph = 0.9f;
-		sensor_gps.epv = 1.78f;
+		sensor_gps.eph = _sim_gz_gps_eph.get();
+		sensor_gps.epv = _sim_gz_gps_epv.get();
 		sensor_gps.hdop = 0.7f;
 		sensor_gps.vdop = 1.1f;
 
