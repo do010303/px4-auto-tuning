@@ -1,0 +1,4 @@
+# Applied by run_sitl.sh after boot. Only what is needed to fly offboard
+# without a ground station or RC; controller and estimator stay at defaults.
+NAV_DLL_ACT 0
+COM_RCL_EXCEPT 4

@@ -1,0 +1,12 @@
+run/
+results/raw/
+*.ulg
+__pycache__/
+build/
+install/
+log/
+*.pyc
+
+# Local-only assistant notes
+CLAUDE.md
+.claude/
