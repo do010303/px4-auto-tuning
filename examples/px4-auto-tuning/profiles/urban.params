@@ -1,0 +1,8 @@
+# Between buildings. Assumed values for comparison, not taken from a measurement campaign.
+# Position noise SD ~3 m, velocity noise SD ~0.4 m/s, 5 Hz, few satellites.
+SIM_GZ_GPS_PNOIS 110
+SIM_GZ_GPS_VNOIS 1.0
+SIM_GZ_GPS_DIV 6
+SIM_GZ_GPS_EPH 6.0
+SIM_GZ_GPS_EPV 9.0
+SIM_GPS_USED 6

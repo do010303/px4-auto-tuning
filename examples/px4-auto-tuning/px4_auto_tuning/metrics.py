@@ -83,6 +83,14 @@ def load(ulog_path):
     return ULog(ulog_path, [SETPOINT, ESTIMATE, TRUTH, 'vehicle_angular_velocity', 'actuator_motors'])
 
 
+def sim_gap_ms(ulog, t_start, t_end):
+    """Longest gap between gyro samples in the window; large means the simulator stalled."""
+    rates = _dataset(ulog, 'vehicle_angular_velocity')
+    t = rates['timestamp_sample']
+    t = t[(rates['timestamp'] >= t_start) & (rates['timestamp'] <= t_end)]
+    return float(np.max(np.diff(t)) * 1e-3) if len(t) > 1 else float('nan')
+
+
 def compute(ulog, t_hover, t_start, t_end, t_hover_end=None):
     """Metrics for the window [t_start, t_end] of a ulog (path or `load()` result).
 

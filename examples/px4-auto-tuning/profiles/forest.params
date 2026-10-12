@@ -1,0 +1,8 @@
+# Under tree canopy. Assumed values for comparison, not taken from a measurement campaign.
+# Position noise SD ~1.5 m, velocity noise SD ~0.2 m/s, 5 Hz, fewer satellites.
+SIM_GZ_GPS_PNOIS 55
+SIM_GZ_GPS_VNOIS 0.5
+SIM_GZ_GPS_DIV 6
+SIM_GZ_GPS_EPH 3.0
+SIM_GZ_GPS_EPV 5.0
+SIM_GPS_USED 8

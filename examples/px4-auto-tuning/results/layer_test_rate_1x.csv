@@ -1,0 +1,9 @@
+level,bypassed,hold_s,px4_stamp,rate_hz,closed_loop,test_cut_short,left_offboard,left_offboard_after_s,test_nav_states,test_duration_s,test_drift_xy_max_m,test_drift_xy_end_m,test_climb_max_m,test_sink_max_m,test_tilt_max_deg,test_speed_end_m_s,recovered,recover_duration_s,recover_drift_xy_max_m,recover_drift_xy_end_m,recover_climb_max_m,recover_sink_max_m,recover_tilt_max_deg,recover_speed_end_m_s,exit_code,run,px4_errors
+position,nothing,6.0,False,2.0,False,False,False,,14,6.02,0.04,0.03,0.01,0.02,0.3,0.01,True,10.02,0.05,0.04,0.02,0.02,0.4,0.03,0,0,0
+position,nothing,6.0,False,1.0,False,False,False,,14,6.02,0.03,0.02,-0.0,0.02,0.2,0.03,True,10.02,0.04,0.04,0.01,0.01,0.3,0.02,0,0,0
+position,nothing,6.0,False,0.8,False,False,True,1.12,14 > 5,1.12,0.03,0.03,-0.01,0.02,0.3,0.01,,,,,,,,,0,0,0
+position,nothing,6.0,False,0.5,False,False,True,1.12,14 > 5,1.12,0.06,0.05,-0.01,0.02,0.4,0.03,,,,,,,,,0,0,0
+body_rate,position + attitude control,6.0,False,2.0,False,False,False,,14,6.02,0.77,0.77,0.56,0.01,0.5,0.23,True,10.02,0.89,0.02,0.64,0.01,8.1,0.02,0,0,0
+body_rate,position + attitude control,6.0,False,1.0,False,False,False,,14,6.02,1.1,1.1,0.53,0.02,0.7,0.35,True,10.02,1.36,0.01,0.62,0.01,12.6,0.02,0,0,0
+body_rate,position + attitude control,6.0,False,0.8,False,False,True,1.08,14 > 5,1.08,0.06,0.03,-0.0,0.01,0.4,0.06,,,,,,,,,0,0,0
+body_rate,position + attitude control,6.0,False,0.5,False,False,True,1.06,14 > 5,1.06,0.03,0.03,-0.01,0.02,0.3,0.02,,,,,,,,,0,0,0

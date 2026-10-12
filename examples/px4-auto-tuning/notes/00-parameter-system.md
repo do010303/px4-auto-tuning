@@ -32,7 +32,8 @@ Mỗi module khai báo param trong YAML (ví dụ
 `src/modules/mc_pos_control/multicopter_position_control_gain_params.yaml`) với
 `default / min / max / decimal / unit`. Lúc build, `src/lib/parameters/px_process_params.py`
 và `px_generate_params.py` sinh ra bảng param + metadata. `min/max` là metadata cho
-GCS và tài liệu (cần kiểm chứng bằng thí nghiệm: set giá trị ngoài khoảng xem firmware có kẹp không).
+GCS và tài liệu; firmware không kẹp giá trị khi `param set` (đã kiểm chứng: `MPC_XY_P` = 3.2 với `max: 2`
+vẫn có hiệu lực và đổi kết quả bay).
 
 Module C++ dùng `DEFINE_PARAMETERS(...)` và kế thừa `ModuleParams`; `updateParams()`
 (`platforms/common/include/px4_platform_common/module_params.h:84`) đọc lại toàn bộ

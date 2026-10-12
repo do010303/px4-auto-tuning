@@ -1,0 +1,70 @@
+{
+  "ulog": "run/rootfs/log/2026-10-06/03_39_06.ulg",
+  "sequence": [
+    [
+      4.1,
+      "roll"
+    ],
+    [
+      9.2,
+      "roll_pause"
+    ],
+    [
+      11.2,
+      "pitch"
+    ],
+    [
+      16.3,
+      "pitch_pause"
+    ],
+    [
+      18.4,
+      "yaw"
+    ],
+    [
+      38.5,
+      "fail"
+    ],
+    [
+      40.6,
+      "idle"
+    ]
+  ],
+  "final_state": "idle",
+  "roll": {
+    "rate_k": 0.1468,
+    "rate_i": 1.335,
+    "rate_d": 0.01935,
+    "att_p": 6.5,
+    "seconds": 5.0
+  },
+  "pitch": {
+    "rate_k": 0.1107,
+    "rate_i": 1.331,
+    "rate_d": 0.01943,
+    "att_p": 6.5,
+    "seconds": 5.0
+  },
+  "yaw": {
+    "rate_k": 0.1801,
+    "rate_i": 0.9786,
+    "rate_d": 0.00024,
+    "att_p": 5.301,
+    "seconds": 20.0
+  },
+  "model": "x500",
+  "current_params": {
+    "MC_ROLLRATE_P": 0.15,
+    "MC_ROLLRATE_I": 0.2,
+    "MC_ROLLRATE_D": 0.003,
+    "MC_PITCHRATE_P": 0.15,
+    "MC_PITCHRATE_I": 0.2,
+    "MC_PITCHRATE_D": 0.003,
+    "MC_YAWRATE_P": 0.2,
+    "MC_YAWRATE_I": 0.1,
+    "MC_YAWRATE_D": 0.0,
+    "MC_ROLL_P": 4.0,
+    "MC_PITCH_P": 4.0,
+    "MC_YAW_P": 2.8
+  }
+}

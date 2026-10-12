@@ -1,0 +1,9 @@
+# PX4 parameters that go with x500_long; applied at boot by run_sitl.sh
+CA_ROTOR0_PX 0.182
+CA_ROTOR0_PY 0.308
+CA_ROTOR1_PX -0.182
+CA_ROTOR1_PY -0.28
+CA_ROTOR2_PX 0.182
+CA_ROTOR2_PY -0.308
+CA_ROTOR3_PX -0.182
+CA_ROTOR3_PY 0.28

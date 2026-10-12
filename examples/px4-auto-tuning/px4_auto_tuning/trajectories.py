@@ -20,6 +20,7 @@ class Trajectory:
     size_y: float = 4.0       # m, half-extent along east
     altitude: float = 5.0     # m above the local origin (positive up)
     waves: int = 3            # sine only: number of sine periods along the leg
+    size_z: float = 0.0       # m, vertical amplitude around the altitude (one cycle per lap)
 
     def position(self, s: float) -> np.ndarray:
         """NED position at phase time ``s``. Starts at the origin for s=0."""
@@ -43,7 +44,7 @@ class Trajectory:
         else:
             raise ValueError(f'unknown trajectory kind: {self.kind}')
 
-        return np.array([x, y, -self.altitude])
+        return np.array([x, y, -self.altitude - self.size_z * math.sin(w * s)])
 
 
 class SpeedRamp:

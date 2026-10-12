@@ -1,0 +1,8 @@
+# Open sky. Assumed values for comparison, not taken from a measurement campaign.
+# Position noise SD ~0.3 m, velocity noise SD ~5 cm/s, 10 Hz.
+SIM_GZ_GPS_PNOIS 11
+SIM_GZ_GPS_VNOIS 0.13
+SIM_GZ_GPS_DIV 3
+SIM_GZ_GPS_EPH 0.8
+SIM_GZ_GPS_EPV 1.5
+SIM_GPS_USED 14

@@ -1,0 +1,27 @@
+{
+  "px4_to_ros": {
+    "messages": 500,
+    "rate_hz": 50.0,
+    "published_rate_hz": 50.0,
+    "delay_above_fastest": {
+      "p50_ms": 0.16,
+      "p95_ms": 0.28,
+      "p99_ms": 0.34,
+      "max_ms": 0.74
+    },
+    "arrival_interval": {
+      "p50_ms": 20.0,
+      "p95_ms": 20.14,
+      "p99_ms": 20.27,
+      "max_ms": 20.63
+    }
+  },
+  "ros_to_px4_to_ros": {
+    "sent": 100,
+    "answered": 100,
+    "p50_ms": 11.96,
+    "p95_ms": 12.16,
+    "p99_ms": 12.26,
+    "max_ms": 12.41
+  }
+}

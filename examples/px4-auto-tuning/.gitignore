@@ -10,3 +10,5 @@ log/
 # Local-only assistant notes
 CLAUDE.md
 .claude/
+README.local.md
+MANUAL.local.md

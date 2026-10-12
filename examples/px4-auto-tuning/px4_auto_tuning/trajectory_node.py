@@ -41,7 +41,8 @@ class TrajectoryNode(Node):
         super().__init__('trajectory_node')
         self.args = args
         self.traj = Trajectory(kind=args.kind, period=args.period, size_x=args.size_x,
-                               size_y=args.size_y, altitude=args.altitude, waves=args.waves)
+                               size_y=args.size_y, altitude=args.altitude, waves=args.waves,
+                               size_z=args.size_z)
         self.ramp = SpeedRamp(args.laps, args.period, args.ramp)
 
         qos = QoSProfile(reliability=ReliabilityPolicy.BEST_EFFORT,
@@ -69,6 +70,7 @@ class TrajectoryNode(Node):
 
         self.state = 'WAIT'
         self.state_t0 = 0.0
+        self.wait_t0 = time.monotonic()
         self.tick = 0
         self.origin = np.zeros(3)
         self.done = False
@@ -77,7 +79,8 @@ class TrajectoryNode(Node):
         self.events = csv.writer(self.events_file)
         self.events.writerow(['px4_boot_time_us', 'event', 'detail'])
 
-        self.timer = self.create_timer(1.0 / self.RATE_HZ, self._step)
+        # Keep the setpoint rate constant in simulated time
+        self.timer = self.create_timer(1.0 / (self.RATE_HZ * args.speed), self._step)
 
     # -- subscriptions -----------------------------------------------------
 
@@ -113,10 +116,18 @@ class TrajectoryNode(Node):
     def _px4_time(self) -> int:
         # uXRCE-DDS rewrites timestamps to the agent's clock; undo that so the
         # events line up with the ulog, which is in PX4 boot time
-        if self.lpos is None or self.time_offset is None:
+        if self.lpos is None:
             return 0
 
-        return int(self.lpos.timestamp) + self.time_offset
+        if not self._stamps_converted():
+            return int(self.lpos.timestamp)
+
+        return int(self.lpos.timestamp) + (self.time_offset or 0)
+
+    def _stamps_converted(self) -> bool:
+        # With UXRCE_DDS_SYNCT=0 (what run_sitl.sh sets) the stamps are already
+        # PX4 boot time; converted ones are Unix time, which is far larger
+        return self.lpos.timestamp > 1e15
 
     def _event(self, name: str, detail: str = ''):
         self.events.writerow([self._px4_time(), name, detail])
@@ -173,11 +184,20 @@ class TrajectoryNode(Node):
         if self.state == 'WAIT':
             self._resolve_topics()
 
-            if self.lpos is not None and self.status is not None and self.time_offset is not None \
-               and self.lpos.xy_valid:
+            ready = self.lpos is not None and self.status is not None and self.lpos.xy_valid
+
+            if ready and (self.time_offset is not None or not self._stamps_converted()):
                 # Path coordinates are relative to where the vehicle sits now
                 self.origin = np.array([self.lpos.x, self.lpos.y, self.lpos.z])
                 self._enter('ARM')
+
+            elif time.monotonic() - self.wait_t0 > 120.0:
+                # Wall time: without a position estimate there is no PX4 clock to go by
+                self.get_logger().error('no valid position estimate after 120 s. If PX4 is up (pxh> answers), '
+                                        'ROS has lost the DDS agent, typically after the network changed: '
+                                        'run ./restart_agent.sh and try again')
+                self.exit_code = 1
+                self.done = True
 
             return
 
@@ -223,7 +243,7 @@ class TrajectoryNode(Node):
             t = self._elapsed()
             pos, vel, acc = sample(self.traj, self.ramp, t)
             pos[:2] += self.origin[:2]
-            pos[2] = hover[2]
+            pos[2] += self.origin[2]
 
             if self.args.no_ff:
                 self._publish(pos)
@@ -289,12 +309,14 @@ def parse_args(argv=None):
     parser.add_argument('--period', type=float, help='seconds per lap')
     parser.add_argument('--size-x', type=float, help='half extent north [m]')
     parser.add_argument('--size-y', type=float, help='half extent east [m]')
+    parser.add_argument('--size-z', type=float, default=0.0, help='vertical amplitude [m], one cycle per lap')
     parser.add_argument('--waves', type=int, default=2, help='sine only: sine periods along the leg')
     parser.add_argument('--altitude', type=float, default=5.0)
     parser.add_argument('--yaw', type=float, default=0.0, help='constant heading [rad]')
     parser.add_argument('--ramp', type=float, default=4.0, help='speed ramp duration [s]')
     parser.add_argument('--settle', type=float, default=5.0, help='hover before/after the laps [s]')
     parser.add_argument('--max-error', type=float, default=10.0, help='abort when this far off the reference [m]')
+    parser.add_argument('--speed', type=float, default=1.0, help='simulation speed factor the SITL runs at')
     parser.add_argument('--no-ff', action='store_true', help='send position only (no velocity/acceleration feedforward)')
     parser.add_argument('--no-land', action='store_true', help='keep hovering in offboard when done')
     parser.add_argument('--events', default='events.csv', help='phase/lap marker file (PX4 time)')

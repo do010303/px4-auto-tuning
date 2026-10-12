@@ -11,7 +11,7 @@ PX4_LOG = os.path.join(HERE, 'run', 'px4.log')
 
 class Sim:
 
-    def __init__(self, world='default', headless=True, env=None, attach=False):
+    def __init__(self, world='default', headless=True, env=None, attach=False, speed=1.0, model='x500'):
         # attach: the user runs ./run_sitl.sh in their own terminal; never
         # start, stop or restart it from here
         self.attach = attach
@@ -21,9 +21,14 @@ class Sim:
         if headless:
             self.env['HEADLESS'] = '1'
 
+        self.env['PX4_SIM_MODEL'] = f'gz_{model}'
+
+        if speed != 1.0:
+            self.env['PX4_SIM_SPEED_FACTOR'] = str(speed)
+
         self.proc = None
 
-    def start(self, timeout=90.0):
+    def start(self, timeout=240.0):
         if self.attach:
             if self.started:
                 raise SystemExit('the flight failed and --attach cannot restart SITL: '
@@ -31,6 +36,15 @@ class Sim:
 
             self.started = True
             return
+
+        # Restarting kills every SITL on the machine, including one the user
+        # opened by hand with ./run_sitl.sh (that PX4 runs without -d)
+        manual = subprocess.run(['pgrep', '-f', r'^\S*/px4_sitl_default/bin/px4 /'],
+                                capture_output=True, text=True).stdout.split()
+
+        if manual:
+            raise SystemExit(f'a SITL started by hand is running (pid {" ".join(manual)}): '
+                             'add --attach to use it, or close it first')
 
         self.stop()
 

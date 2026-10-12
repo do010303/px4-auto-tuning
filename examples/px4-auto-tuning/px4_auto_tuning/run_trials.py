@@ -43,6 +43,8 @@ def main():
     parser.add_argument('--attach', action='store_true',
                         help='use the SITL that is already running (started by hand) instead of starting one')
     parser.add_argument('--world', default='default')
+    parser.add_argument('--model', default='x500', help='x500 or a variant from ./models')
+    parser.add_argument('--speed', type=float, default=1.0, help='simulation speed factor')
     parser.add_argument('--gui', action='store_true', help='show the Gazebo GUI')
     parser.add_argument('node_args', nargs='*')
     args = parser.parse_args()
@@ -51,7 +53,7 @@ def main():
     os.makedirs(raw, exist_ok=True)
     table = os.path.join(args.out, f'{args.name}.csv')
     rows = []
-    sim = Sim(world=args.world, headless=not args.gui, attach=args.attach)
+    sim = Sim(world=args.world, headless=not args.gui, attach=args.attach, speed=args.speed, model=args.model)
     sim.start()
     log_pos = sim.log_errors()[1]
     attempt = 0
@@ -59,7 +61,7 @@ def main():
     while sum(r['valid'] for r in rows) < args.n and attempt < 3 * args.n:
         events = os.path.join(raw, f'events_{attempt:03d}.csv')
         code = subprocess.call([sys.executable, '-m', 'px4_auto_tuning.trajectory_node',
-                                '--events', events, *args.node_args])
+                                '--events', events, '--speed', str(args.speed), *args.node_args])
         errors, log_pos = sim.log_errors(log_pos)
         row = {'trial': attempt, 'exit_code': code, 'valid': False, 'px4_errors': len(errors)}
 
